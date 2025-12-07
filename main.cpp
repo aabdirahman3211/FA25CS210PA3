@@ -117,9 +117,42 @@ void printPath(pair<int,int> exitcell,
 // STUDENTS IMPLEMENT DFS HERE
 // Add arguments, return type, and logic
 // ----------------------------------------------------------
-// bool dfs(……) {
-//     // Your code here
-// }
+bool dfs(int r, int c, const vector<vector<int>>& maze, vector<vector<bool>>& visited,
+    vector<vector<int>>& parent_r, vector<vector<int>>& parent_c, int exit_r, int exit_c) {
+    // your code
+    int N = maze.size();
+    int M = maze[0].size();
+
+    // check if out of bounds
+    if (r < 0 || r >= N || c < 0 || c >= M) return false;
+
+    // checks if it is a wall or was already visited
+    if (maze[r][c] == 1 || visited[r][c]) return false;
+
+    visited[r][c] = true;
+
+    // check if exit is reached
+    if (r == exit_r && c == exit_c) return true;
+
+    // explores all 4 directions
+    for (int d = 0; d < 4; d++) {
+        int nr = r + dr[d];
+        int nc = c + dc[d];
+
+        // check bounds before doing anything with the arrays
+        if (nr < 0 || nr >= N || nc < 0 || nc >= M) continue;
+        if (visited[nr][nc]) continue;
+
+        parent_r[nr][nc] = r;
+        parent_c[nr][nc] = c;
+
+        if (dfs(nr, nc, maze, visited, parent_r, parent_c, exit_r, exit_c)) {
+            return true;
+        }
+    }
+
+    return false;
+ }
 
 
 // ----------------------------------------------------------
@@ -159,17 +192,12 @@ int main() {
     // STUDENT WORK:
     // Call your DFS, track visited, and fill parent_r and parent_c
     // ------------------------------------------------------
-    // bool found = dfs(ent_r, ent_c, maze, visited, parent_r, parent_c, exit_r, exit_c);
-
-    // ------------------------------------------------------
-    // STUDENT WORK:
-    // If found, print the path
-    // ------------------------------------------------------
-    // if (found) {
-    //     printPath(exitcell, parent_r, parent_c, ent_r, ent_c);
-    // } else {
-    //     cout << "\nNo path exists.\n";
-    // }
+    bool found = dfs(ent_r, ent_c, maze, visited, parent_r, parent_c, exit_r, exit_c);
+    if (found) {
+        printPath(exitcell, parent_r, parent_c, ent_r, ent_c);
+    } else {
+        cout << "\nNo path exists.\n";
+    }
 
     return 0;
 }
